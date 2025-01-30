@@ -1,55 +1,50 @@
 // firebase.test.js
 import { initializeApp } from "firebase/app";
-import { 
-  getAuth, 
-  GoogleAuthProvider, 
-  connectAuthEmulator 
-} from "firebase/auth";
-import { 
-  getFirestore, 
-  connectFirestoreEmulator 
-} from "firebase/firestore";
+import { getAuth, GoogleAuthProvider, connectAuthEmulator } from "firebase/auth";
+import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 
-// Dit is een fake configuratie. De emulator gebruikt deze waardes niet echt om te connecten. 
-// Belangrijk is dat je projectId hetzelfde is als in je echte config, zodat emulator en je app matchen.
-const firebaseTestConfig = {
-  apiKey: "fake-api-key",
-  authDomain: "localhost", 
-  projectId: "leakplanting", // Zorg dat dit overeenkomt met je echte projectId
-  storageBucket: "fake-storage-bucket",
-  messagingSenderId: "fake-messaging-sender-id",
-  appId: "fake-app-id"
+// Usando la configuración real de tu proyecto de Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyBYy3QiP94OP-Arb3Xv0aHygjTYIP5TLMk",
+  authDomain: "leakplanting.firebaseapp.com",
+  projectId: "leakplanting",
+  storageBucket: "leakplanting.firebasestorage.app",
+  messagingSenderId: "725588759111",
+  appId: "1:725588759111:web:cb92ec657d726872c0d762",
+  measurementId: "G-EY9LGN065L"
 };
 
-const app = initializeApp(firebaseTestConfig);
+// Inicializamos la app de Firebase
+const app = initializeApp(firebaseConfig);
 
-export const auth = getAuth(app);
-// Verbind Auth met de emulatorport (zoals in firebase.json)
-connectAuthEmulator(auth, "http://localhost:9099");
-
-export const googleProvider = new GoogleAuthProvider();
-googleProvider.setCustomParameters({ prompt: 'select_account' });
-
-export const db = getFirestore(app);
-// Verbind Firestore met de emulatorport
-connectFirestoreEmulator(db, "localhost", 8080);
 describe('Firebase Initialization Tests', () => {
-  let app;
   let auth;
   let db;
+  let googleProvider;
 
   beforeEach(() => {
-    app = initializeApp(firebaseTestConfig);
+    // Inicializamos los servicios de autenticación y Firestore
     auth = getAuth(app);
     db = getFirestore(app);
-    connectAuthEmulator(auth, "http://localhost:9099");
-    connectFirestoreEmulator(db, "localhost", 8080);
+    googleProvider = new GoogleAuthProvider();
+
+    // Establecemos los parámetros personalizados para GoogleAuthProvider
+    googleProvider.setCustomParameters({ prompt: 'select_account' });
+
+    // Conectamos los emuladores si los estás utilizando (descomenta si es necesario)
+    // connectAuthEmulator(auth, "http://localhost:9099");
+    // connectFirestoreEmulator(db, "localhost", 8080);
   });
 
   test('should initialize Firebase app', () => {
     expect(app).toBeTruthy();
     expect(auth).toBeTruthy();
     expect(db).toBeTruthy();
+    expect(googleProvider).toBeTruthy();
   });
 
+  test('should set custom parameters for Google auth provider', () => {
+    // Aquí verificamos que el parámetro "prompt" esté correctamente configurado
+    expect(googleProvider.getCustomParameters().prompt).toBe('select_account');
+  });
 });
