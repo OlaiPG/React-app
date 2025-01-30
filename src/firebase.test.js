@@ -33,3 +33,23 @@ googleProvider.setCustomParameters({ prompt: 'select_account' });
 export const db = getFirestore(app);
 // Verbind Firestore met de emulatorport
 connectFirestoreEmulator(db, "localhost", 8080);
+describe('Firebase Initialization Tests', () => {
+  let app;
+  let auth;
+  let db;
+
+  beforeEach(() => {
+    app = initializeApp(firebaseTestConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
+    connectAuthEmulator(auth, "http://localhost:9099");
+    connectFirestoreEmulator(db, "localhost", 8080);
+  });
+
+  test('should initialize Firebase app', () => {
+    expect(app).toBeTruthy();
+    expect(auth).toBeTruthy();
+    expect(db).toBeTruthy();
+  });
+
+});
